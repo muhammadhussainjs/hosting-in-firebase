@@ -8,6 +8,8 @@ const description = document.getElementById('description')
 const form = document.getElementById('form')
 const maindiv = document.getElementById('container')
 const names = document.getElementById('name')
+const uid = document.getElementById('uid')
+const profileImage = document.querySelector('#profileimage');
 
 
 
@@ -17,12 +19,13 @@ onAuthStateChanged(auth, async (user) => {
           const uid = user.uid;
           console.log(uid);
 
-          const q = query(collection(db, "post"), where("uid", "==", uid) ,
-           orderBy("postDate" , "desc"));
+          const q = query(collection(db, "post"), where("uid", "==", uid));
           const querySnapshot = await getDocs(q);
           querySnapshot.forEach((doc) => {
               console.log(doc.data())
               names.innerHTML = doc.data().name
+              profileImage.src = doc.data().profileUrl
+              uid.innerHTML = doc.data().uid
           });
         } else {
           window.location = "login.html"
@@ -93,6 +96,7 @@ form.addEventListener("submit" , async (event)=>{
     event.preventDefault()
 try {
     const docRef = await addDoc(collection(db, "post"), {
+
       title: title.value,
       description: description.value,
       uid: auth.currentUser.uid, 
